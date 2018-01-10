@@ -9,6 +9,7 @@ void setup(){
 
 void draw(){
 
+  background(0);
   stroke(255);
   for(int y = 0 ; y < width;y+=5){
     for(int x = 0 ; x < width;x+=5){
