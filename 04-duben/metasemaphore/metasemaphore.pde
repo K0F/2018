@@ -7,12 +7,12 @@
 
 */
 
-float SPEED = 6.0;
+float SPEED = 0.75;
 
 void setup(){
   size(128,128,P2D);
   colorMode(HSB,1024);
-  frameRate(59.99);
+  frameRate(60);
 }
 
 
@@ -24,7 +24,7 @@ void draw(){
     for(int x = 0 ; x < width ; x++){
       
       float h = map( (x-(width/2.0)+(time*width)) ,0,width,0,1024.0);
-      float s = map(y,0,height,1024.0,0);
+      float s = 512.0;//map(y,0,height,1024.0,0);
       float b = map(y,0,height,1024.0,0);
      
       color c = color(h,s,b);
