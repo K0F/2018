@@ -1,23 +1,27 @@
 int [] design = {
-  4,
-  64,64,64,64,
-  64,64,64,64,
-  64,64,64,64,
-  64,64,64,64,
-4};
-Network A, B, C ,D;
-float bias = -0.5;
+16,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+16};
+Network A;
+float bias = 0.0;
 
-float speed = 4.01;
+float speed = 10.0;
 
 void setup() {
 
-  size(1280, 320, P2D);
+  size(320, 320, P2D);
   A = new Network(design);
-  B = new Network(design);
   
-  C = new Network(design);
-  D = new Network(design);
 }
 
 void draw() {
@@ -28,23 +32,26 @@ bias = 1.0;
 
   noStroke();
 
-  float vals[] = A.getOutputs();
+  float vals[] = new float[design[0]];
 
   float x = 10;
 
+  if(frameCount>1){
+
+  for(int i = 0; i < vals.length;i++){
+  Trail t = (Trail)A.trails.get(i);
+  vals[i] = 2-(Float)t.points.get(0);
+  }
+  }
+  
   A.feed(vals);
   A.step();
   A.draw(x, 10);
   x+=design.length*3+10;
- 
-  vals = B.getOutputs();
- 
-  B.feed(vals);
-  B.step();
-  B.draw(x, 10);
-  x+=design.length*3+10;
   
-  
+
+
+/*  
   vals = C.getOutputs();
   C.feed(vals);
   C.step();
@@ -56,7 +63,7 @@ bias = 1.0;
   D.step();
   D.draw(x, 10);
   x+=design.length*3+10;
-  
+  */
 }
 
 class Trail {
@@ -130,7 +137,7 @@ class Network {
     
     resetMatrix();
     
-    translate(x, y+100);
+    translate(x, y+200);
     stroke(0, 25);
 
     float [] vals = getOutputs();
@@ -177,7 +184,6 @@ class Layer {
     for (int i = 0; i < neurons.size(); i++) {
       Neuron tmp = (Neuron)neurons.get(i);
       
-//speed = noise(millis()/100.0/(i/10.0+1.0))*20.0;
       tmp.step();
     }
   }
@@ -196,18 +202,21 @@ class Neuron {
   float val;
   int id;
   boolean hidden;
-  
+  //float speed = 1.01; 
   Layer parent;
 
   Neuron(Layer _parent, int _id) {
     parent = _parent;
     id = _id;
     val = random(-1000, 1000)/1000.0;
+    
+    //speed= pow(id,0.99)+1.001;
+    
     if (parent.id!=0) {
       hidden = true;
       w = new float[parent.net.scheme[parent.id-1]];
       for (int i = 0; i < w.length; i++) {
-        w[i] = random(-1, 1);
+        w[i] = random(-10000,10000)/10000.0;
       }
     }
   }
@@ -220,11 +229,15 @@ class Neuron {
       for (int i = 0; i < previousLayer.neurons.size(); i++) {
         Neuron preN = (Neuron)previousLayer.neurons.get(i);
         sum += preN.val * w[i];  
-        w[i] += (random(-1, 1)-w[i])/(speed*speed);
+       // w[i] += (((noise(w[i]+preN.val)-0.5)*w[i]))/10000.0;
+        //w[i] += (random(-1, 1)-w[i])/(speed*speed);
+        //w[i] += (sin((millis()*10.0)+(i*QUARTER_PI)+(parent.id*PI))-w[i])/100.0;
       }
       val += (sigmoid(sum)-val)/speed;
+      /*
       if(id==0)
       val=bias;
+      */
     }
   }
 
