@@ -1,29 +1,63 @@
+/**
+Coded by Kof @ 
+Tue Aug 21 22:23:54 CEST 2018
+\n\n
+   ,dPYb,                  ,dPYb,
+   IP'`Yb                  IP'`Yb
+   I8  8I                  I8  8I
+   I8  8bgg,               I8  8'
+   I8 dP" "8    ,ggggg,    I8 dP
+   I8d8bggP"   dP"  "Y8ggg I8dP
+   I8P' "Yb,  i8'    ,8I   I8P
+  ,d8    `Yb,,d8,   ,d8'  ,d8b,_
+  88P      Y8P"Y8888P"    PI8"8888
+                           I8 `8,
+                           I8  `8,
+                           I8   8I
+                           I8   8I
+                           I8, ,8'
+                            "Y8P'
+*/
+
+
 int [] design = {
-7,
+8,
+32,32,32,32,
+32,32,32,32,
+64,8,64,
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
+64,8,64,
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
+64,8,64,
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
-7};
+32,32,32,32,
+64,8,64,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+32,32,32,32,
+8
+};
 
 Network A;
 Network B;
 
 float bias = 0.0;
 
-float speed1 = 2.01;
-float speed2 = 2.01;
+float speed1 = 1.001;
+float speed2 = 2.001;
 
 void setup() {
 
-  size(320, 320, P2D);
+  size(720, 320, P2D);
   A = new Network(design,speed1);
   B = new Network(design,speed2);
   
@@ -31,9 +65,9 @@ void setup() {
 
 void draw() {
 
-bias = 1.0;
+  bias = 1.0;
 
-  background(255);
+  background(127);
 
   noStroke();
 
@@ -42,14 +76,7 @@ bias = 1.0;
 
   float x = 10;
 
-  if(frameCount>1){
 
-  for(int i = 0; i < vals.length;i++){
-  Trail t = (Trail)A.trails.get(i);
-  vals[i] = (Float)t.points.get(0);
-  }
-  }
-  
   vals = B.getOutputs();
   A.feed(vals);
   A.step();
@@ -227,13 +254,13 @@ class Neuron {
     speed = parent.net.speed;
     val = random(-1000, 1000)/1000.0;
     
-    //speed= pow(id,0.99)+1.001;
+    speed= pow(id*speed,0.19)+1.001;
     
     if (parent.id!=0) {
       hidden = true;
       w = new float[parent.net.scheme[parent.id-1]];
       for (int i = 0; i < w.length; i++) {
-        w[i] = random(-10000,10000)/10000.0;
+        w[i] = random(-5000,5000)/10000.0;
       }
     }
   }
@@ -246,9 +273,8 @@ class Neuron {
       for (int i = 0; i < previousLayer.neurons.size(); i++) {
         Neuron preN = (Neuron)previousLayer.neurons.get(i);
         sum += preN.val * w[i];  
-       // w[i] += (((noise(w[i]+preN.val)-0.5)*w[i]))/10000.0;
-        //w[i] += (random(-1, 1)-w[i])/(speed*speed);
-        //w[i] += (sin((millis()*10.0)+(i*QUARTER_PI)+(parent.id*PI))-w[i])/100.0;
+       cnt+=1.0;
+        w[i] += random(-100,100)/10000.0;
       }
       val += (sigmoid(sum)-val)/speed;
       /*
@@ -259,6 +285,6 @@ class Neuron {
   }
 
   float sigmoid(float _x) {
-    return HALF_PI*atan(HALF_PI*_x);
+    return 0.5*atan(HALF_PI*_x);
   }
 }
