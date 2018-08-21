@@ -19,7 +19,7 @@ Network B;
 float bias = 0.0;
 
 float speed1 = 2.01;
-float speed2 = 4.01;
+float speed2 = 2.01;
 
 void setup() {
 
