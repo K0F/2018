@@ -1,5 +1,5 @@
 int [] design = {
-16,
+7,
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
@@ -11,16 +11,21 @@ int [] design = {
 32,32,32,32,
 32,32,32,32,
 32,32,32,32,
-16};
+7};
+
 Network A;
+Network B;
+
 float bias = 0.0;
 
-float speed = 10.0;
+float speed1 = 2.01;
+float speed2 = 4.01;
 
 void setup() {
 
   size(320, 320, P2D);
-  A = new Network(design);
+  A = new Network(design,speed1);
+  B = new Network(design,speed2);
   
 }
 
@@ -33,6 +38,7 @@ bias = 1.0;
   noStroke();
 
   float vals[] = new float[design[0]];
+  float vals2[] = new float[design[0]];
 
   float x = 10;
 
@@ -40,16 +46,24 @@ bias = 1.0;
 
   for(int i = 0; i < vals.length;i++){
   Trail t = (Trail)A.trails.get(i);
-  vals[i] = 2-(Float)t.points.get(0);
+  vals[i] = (Float)t.points.get(0);
   }
   }
   
+  vals = B.getOutputs();
   A.feed(vals);
   A.step();
   A.draw(x, 10);
   x+=design.length*3+10;
   
-
+ 
+  
+  vals = A.getOutputs();
+  B.feed(vals);
+  B.step();
+  B.draw(x, 10);
+  x+=design.length*3+10;
+  
 
 /*  
   vals = C.getOutputs();
@@ -93,9 +107,11 @@ class Network {
   ArrayList trails;
   ArrayList layers;
   int scheme[];
+  float speed = 1;
 
-  Network(int [] _scheme) {
+  Network(int [] _scheme,float _speed) {
     scheme = _scheme;
+    speed= _speed;
     layers = new ArrayList();
 
     for (int i = 0; i < scheme.length; i++) {
@@ -202,12 +218,13 @@ class Neuron {
   float val;
   int id;
   boolean hidden;
-  //float speed = 1.01; 
+  float speed = 1.01; 
   Layer parent;
 
   Neuron(Layer _parent, int _id) {
     parent = _parent;
     id = _id;
+    speed = parent.net.speed;
     val = random(-1000, 1000)/1000.0;
     
     //speed= pow(id,0.99)+1.001;
