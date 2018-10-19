@@ -2,13 +2,18 @@ ArrayList vectors;
 float scal = 1500.0;
 float amp = 1000.0;
 float blend = 0.55;
-boolean render = true;
+boolean render = false;
 
 PImage start;
 
 void setup() {
   size(1024,768);  
   start = loadImage("test.png");
+
+  vectors = new ArrayList();
+
+  for(int i = 0 ; i < width*height;i++)
+  vectors.add(new PVector(0,0));
 
   loadPixels();
   for (int i = 0; i < pixels.length; i++)
@@ -21,16 +26,23 @@ void setup() {
 }
 
 void update() {
+ 
+  float harmonia[] = {2,3,5,7};
+  for(int i = 0;i < harmonia.length;i++){
   amp = pow(noise(frameCount/100.0),2)*100.0;
   scal = pow(noise(frameCount/250.0),2)*1000.0;
 
-
-  vectors = new ArrayList();
+  float harm = (log(harmonia[i])/log(2));
   for (int y = 0; y < height; y++) {
     for (int x  = 0; x < width; x++) {
-      PVector tmp = new PVector((noise(x/scal+10, y/scal+10, frameCount/scal)-0.5)*amp, (noise(x/scal, y/scal)-0.5)*amp);
-      vectors.add(tmp);
+
+      PVector tmp = new PVector((noise(x/scal+10*harm, y/scal+10*harm, frameCount/scal*harm)-0.5)*amp, (noise(x/scal*harm, y/scal*harm,frameCount/scal*harm)-0.5)*amp);
+      PVector that = (PVector)vectors.get(y*width+x);
+      that.add(tmp);
+      that.normalize();
+      that.mult(amp);
     }
+  }
   }
 }
 
