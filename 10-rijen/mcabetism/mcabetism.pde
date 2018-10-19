@@ -7,8 +7,10 @@ boolean render = false;
 PImage start;
 
 void setup() {
-  size(1024,768);  
-  start = loadImage("test.png");
+noiseSeed(2018);
+  size(1280,720);  
+  start = loadImage("vvg.jpg");
+    start.loadPixels();
 
   vectors = new ArrayList();
 
@@ -50,12 +52,15 @@ void draw() {
   update();
 
   noStroke();
-  fill(
+  color cc = start.pixels[frameCount%start.pixels.length];
+  fill(cc,25);
+  /*fill(
     (sin(frameCount/25.0/15.0*TWO_PI)+1.0)*127.0, 
     (sin(frameCount/25.0/5.0*TWO_PI)+1.0)*127.0, 
     (sin(frameCount/25.0/3.0*TWO_PI)+1.0)*127.0, 
 
     25);
+    */
   ellipse(width/2, height/2, 300, 300);
 
   loadPixels();
