@@ -34,12 +34,12 @@ void keyPressed(){
 
 
 
-  if(keyCode==UP || key=='w'){
+  if(key=='w'){
     div-=1;
     div=constrain(div,1,100);
     println("div: "+div);
   }
-  if(keyCode==DOWN || key=='s'){
+  if(key=='s'){
     div+=1;
     div=constrain(div,1,100);
     println("div: "+div);
@@ -47,20 +47,7 @@ void keyPressed(){
   if(key==' '){
     send=!send;
   }
-  if(keyCode==LEFT){
 
-    String[] ctl = new String[1];
-    ctl[0] = ("seek "+(-1.0)+" relative");
-    saveStrings("/tmp/ctl", ctl);
-    ssnd = 255.0;
-  }
-  if(keyCode==RIGHT){
-
-    String[] ctl = new String[1];
-    ctl[0] = ("seek "+(1.0)+" relative");
-    saveStrings("/tmp/ctl", ctl);
-    ssnd = 255.0;
-  }
 
 }
 
@@ -84,6 +71,48 @@ void setup() {
 void draw() {
   background(0);
 
+  if(keyPressed){
+
+    if(keyCode==LEFT){
+
+      String[] ctl = new String[1];
+      ctl[0] = ("seek "+(-1.0)+" relative");
+      saveStrings("/tmp/ctl", ctl);
+      ssnd = 255.0;
+    }
+    if(keyCode==RIGHT){
+
+      String[] ctl = new String[1];
+      ctl[0] = ("seek "+(1.0)+" relative");
+      saveStrings("/tmp/ctl", ctl);
+      ssnd = 255.0;
+    }
+
+
+    if(keyCode==UP){
+
+      String[] ctl = new String[1];
+      ctl[0] = ("seek "+(-15.0)+" relative");
+      saveStrings("/tmp/ctl", ctl);
+      ssnd = 255.0; 
+    }
+    if(keyCode==DOWN){
+
+      String[] ctl = new String[1];
+      ctl[0] = ("seek "+(15.0)+" relative");
+      saveStrings("/tmp/ctl", ctl);
+      ssnd = 255.0;
+    }
+    if(key>='0'&&key<='9'){
+      println((int)key);
+
+      String[] ctl = new String[1];
+      ctl[0] = ("seek "+(1876.0/10.0*(((int)key-49)+0.0))+" absolute");
+      saveStrings("/tmp/ctl", ctl);
+      ssnd = 255.0;
+    }
+
+  }
 
   noStroke();
   float w = (width/(in.length+0.0));
@@ -95,6 +124,8 @@ void draw() {
       fill(#ffcc00,127);
       rect(i*w,0,w,height);
       rect(i*w,map(div,1,16,0,height),w,height/16);
+      fill(#ffffff);
+      text(lock+":"+div,i*w+8,map(div,1,16,0,height)+12);
     }
 
     if(in[i]>0)
@@ -108,6 +139,9 @@ void draw() {
 
   fill(#ffcc11,ssnd);
   rect(width-15,10,5,5);
+  fill(#00ff11,(sin((millis()/1000.0*bpm/120.0)*TWO_PI)+1.0)*127.0 );
+  rect(width-20,10,5,5);
+
   if(ssnd>0)
     ssnd=-(2/48.0);
 
