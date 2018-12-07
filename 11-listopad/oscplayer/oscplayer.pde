@@ -19,6 +19,7 @@ float in[];
 float last[];
 float bpm = 120.0;
 int lock = 0;
+int con = 0;
 
 void keyPressed(){
 
@@ -38,11 +39,16 @@ void keyPressed(){
     div-=1;
     div=constrain(div,1,100);
     println("div: "+div);
+    for(int i = 0 ; i < last.length;i++)
+    last[i] = (millis()/1000.0);
+  
   }
   if(key=='s'){
     div+=1;
     div=constrain(div,1,100);
     println("div: "+div);
+    for(int i = 0 ; i < last.length;i++)
+    last[i] = (millis()/1000.0);
   }
   if(key==' '){
     send=!send;
@@ -53,7 +59,7 @@ void keyPressed(){
 
 void setup() {
   size(320, 240, P2D);
-  frameRate(48);
+  frameRate(24);
   textFont(createFont("Monaco",8,false));
   /* start oscP5, listening for incoming messages at port 12000 */
   oscP5 = new OscP5(this, 12000);
@@ -72,6 +78,28 @@ void draw() {
   background(0);
 
   if(keyPressed){
+  /*
+    if(key=='q'){
+
+      String[] ctl = new String[1];
+      ctl[0] = ("contrast "+(con));
+      saveStrings("/tmp/ctl", ctl);
+      ssnd = 255.0;
+      con=constrain(con,-100,100);
+      con-=5;
+
+    }
+ if(key=='e'){
+
+      String[] ctl = new String[1];
+      ctl[0] = ("contrast add "+(con));
+      saveStrings("/tmp/ctl", ctl);
+      con+=5;
+      con=constrain(con,-100,100);
+      ssnd = 255.0;
+
+    }
+*/
 
     if(keyCode==LEFT){
 
@@ -92,14 +120,14 @@ void draw() {
     if(keyCode==UP){
 
       String[] ctl = new String[1];
-      ctl[0] = ("seek "+(-15.0)+" relative");
+      ctl[0] = ("seek "+(15.0)+" relative");
       saveStrings("/tmp/ctl", ctl);
       ssnd = 255.0; 
     }
     if(keyCode==DOWN){
 
       String[] ctl = new String[1];
-      ctl[0] = ("seek "+(15.0)+" relative");
+      ctl[0] = ("seek "+(-15.0)+" relative");
       saveStrings("/tmp/ctl", ctl);
       ssnd = 255.0;
     }
@@ -124,7 +152,7 @@ void draw() {
       fill(#ffcc00,127);
       rect(i*w,0,w,height);
       rect(i*w,map(div,1,16,0,height),w,height/16);
-      fill(#ffffff);
+      fill(#000000);
       text(lock+":"+div,i*w+8,map(div,1,16,0,height)+12);
     }
 
@@ -165,13 +193,14 @@ void draw() {
         saveStrings("/tmp/ctl", ctl);
         println(x+" "+(-(millis()/1000.0-last[x])));
         last[x] = (millis()/1000.0);
+        ssnd=255.0;
       }
 
       in[x] = 255.0;
     }
   }
 
-  fill(#ffcc00);
+  fill(#000000);
   text("bpm: "+bpm,10,12);
 
 }
@@ -184,7 +213,8 @@ void oscEvent(OscMessage theOscMessage) {
     // y = theOscMessage.get(1).floatValue();
 
     in[x] = 255.0;
-
+    
+    
     if(x==lock && send){
       sel[x]++;
       if(sel[x]%div==0){
@@ -201,11 +231,15 @@ void oscEvent(OscMessage theOscMessage) {
         saveStrings("/tmp/ctl", ctl);
         println(x+" "+(-(tc))+" bpm: "+(tc));
         bpm += ((60.0/(tc))-bpm)/4.0;
-        last[x] = (tc);
+        last[x] = (millis()/1000.0);
         ssnd=255.0;
 
         println(x);
       }
+    }else{
+      sel[x]++;
+      if(sel[x]%div==0)
+      last[x] = (millis()/1000.0);
     }
   }
 }
